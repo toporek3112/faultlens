@@ -1,0 +1,15 @@
+# LATex
+*.gz
+*.xml
+*.pdf
+*.lot
+*.lof
+*.lof
+*.fls
+*.fdb_latexmk
+*.blg
+*.bcf
+*.bbl
+*.aux
+*.log
+*.zip

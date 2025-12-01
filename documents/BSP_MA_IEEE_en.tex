@@ -1,0 +1,268 @@
+%
+% FH Technikum Wien
+% !TEX encoding = UTF-8 Unicode
+%
+% Erstellung von Master- und Bachelorarbeiten an der FH Technikum Wien mit Hilfe von LaTeX und der Klasse TWBOOK
+%
+% Um ein eigenes Dokument zu erstellen, müssen Sie folgendes ergänzen:
+% 1) Mit \documentclass[..] einstellen
+%    * Master- oder Bachelorarbeit
+%    * Studiengang
+%    * Sprache (english, german, ngerman)
+%    * Zitationsstandard (Harvard, IEEE) (Standard: IEEE)
+%    * Biber oder BibTeX als Literaturbackend (Biber, BibTeX) (Standard: Biber)
+% 2) Deckblatt, Kurzfassung, etc. ausfüllen
+% 3) und die Arbeit schreiben (die verwendeten Literaturquellen in Literatur.bib eintragen)
+%
+% Getestet mit TeXstudio mit Zeichenkodierung utf-8 (=ansinew/latin1) und TexLive unter Ubuntu
+% Zu beachten ist, dass die Kodierung der Datei mit der Kodierung des paketes inputenc zusammen passt!
+% Die Kodierung der Datei twbook.cls MUSS ANSI betragen!
+% Bei der Verwendung von UTF8 muss nicht nur die Kodierung des Dokuments auf UTF8 gestellt sein, sondern auch die des BibTex-Files!
+%
+% Bugreports und Feedback bitte per E-Mail an latex@technikum-wien.at
+%
+% Version V2.24 von 2024-12-19 otrebski
+%
+\documentclass[MDS,Master,english,IEEE]{twbook}%\documentclass[Bachelor,BMR,ngerman]{twbook}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\addbibresource{literatur.bib}
+%% Definieren Sie hier bei Bedarf weitere Literaturdatenbanken
+
+% Die nachfolgenden Pakete stellen sonst nicht benötigte Features zur Verfügung
+\usepackage{blindtext}
+
+%
+% Einträge für Deckblatt, Kurzfassung, etc.
+%
+\title{Root Cause Analysis for Cloud Service Infrastructure Using Machine Learning methods and LLM Agents}
+\author{Karol Topór, BSc.}
+\studentnumber{2310854004}
+%\author{Titel Vorname Name, Titel\and{}Titel Vorname Name, Titel}
+%\studentnumber{XXXXXXXXXXXXXXX\and{}XXXXXXXXXXXXXXX}
+\supervisor{FH-Prof. Priv.-Doz. Mag. Dr. David Meyer}
+%\supervisor[Begutachter]{Titel Vorname Name, Titel}
+%\supervisor[Begutachterin]{Titel Vorname Name, Titel}
+%\secondsupervisor{Titel Vorname Name, Titel}
+%\secondsupervisor[Begutachter]{Titel Vorname Name, Titel}
+%\secondsupervisor[Begutachterinnen]{Titel Vorname Name, Titel}
+\place{Wien}
+\kurzfassung{\blindtext}
+\schlagworte{Schlagwort1, Schlagwort2, Schlagwort3, Schlagwort4}
+\outline{\blindtext}
+\keywords{Keyword1, Keyword2, Keyword3, Keyword4}
+%\acknowledgements{\blindtext}
+
+\begin{document}
+
+\maketitle
+
+%
+% .. und hier beginnt die eigentliche Arbeit. Viel Erfolg beim Verfassen!
+%
+\chapter{Introduction}
+% \blinddocument
+% \blindmathpaper
+
+In recent years, the adoption of the microservice paradigm for software application deployment has continued to accelerate, reflecting its growing popularity within the industry. While development teams focus on decomposing monolithic applications and increasinly writing independent microservices, the underlying challenge remains the same: providing a reliable, maintainable, and developer-friendly platform that enables seamless integration, delivery, and deployment through automated CI/CD pipelines. Operating applications in a distributed manner—particularly on platforms such as Kubernetes, which is itself a distributed system—requires more than container orchestration alone. A fully featured platform must also provide integrated services such as managed CI/CD tooling, Database-as-a-Service (DBaaS), comprehensive observability (metrics, logs, and traces), authentication and authorization mechanisms for both user-to-service and service-to-service communication, as well as robust security measures.
+
+These responsibilities must be fulfilled consistently across multiple execution stages of the platform lifecycle, each with differing operational requirements and reliability expectations. This further increases the complexity of ensuring platform stability and developer productivity. As a result, Platform Engineering teams are tasked with maintaining a dependable environment that enables developers to deploy, operate, and observe their applications effectively.
+
+\section{Motivation}
+Having worked as a Platform Engineer for more than four years, I have experienced the complexity of maintaining a large-scale Kubernetes-based platform on a daily basis. Although the provisioning of the underlying operating systems is outsourced to the cloud provider, the platform team is responsible for the upper layers of the stack—from OS-level configuration, to physical and virtual networking across multiple OSI layers, to the continuous operation and upgrading of Kubernetes itself, which in turn manages the services consumed by internal customers. At the same time, the platform must continuously evolve through new features and enhancements.
+
+When incidents occur, on-call engineers must consider a broad range of potential root-cause domains spanning various layers of the infrastructure. To manage this complexity, most configurations are implemented as Infrastructure as Code (IaC), which is widely regarded as industry best practice. IaC has already proven valuable for debugging, troubleshooting, and detecting configuration drift, especially when combined with modern Large Language Models (LLMs).
+
+The platform currently provides an extensive observability stack that enables both the platform team and application teams to collect metrics, logs, and traces from all running services. The central motivation of this thesis is to leverage this rich data foundation to improve incident response processes—specifically, to reduce Mean Time to Resolution (MTTR)—by integrating machine learning techniques with LLM-based agents.
+
+While the platform offers a complete observability stack—including metrics, logs, and traces—the practical integration of tracing data in microservice architectures remains tedious, time-consuming, and costly, as it requires extensive code instrumentation across numerous services. For this reason, the core of this thesis focuses on combining metrics and logs as multimodal data sources for downstream analytical and machine learning methods. By relying on these two consistently available observability signals, the approach avoids additional instrumentation overhead while still enabling advanced capabilities such as automated anomaly detection and the construction of service dependency graphs derived from temporal and semantic relationships in the data.
+
+To operationalize these insights, the thesis further explores how a frontend LLM system—implemented via OpenWebUI—can leverage the enriched multimodal observability data through a Model Context Protocol (MCP) server. This mediated access also extends to Infrastructure-as-Code (IaC) configurations, enabling the LLM to integrate runtime signals with declarative system specifications. The combined setup aims to support intelligent, data-driven assistance for incident triage, root-cause analysis, and platform engineering workflows.
+
+\section{Problem Statement and Research Questions}
+
+\begin{enumerate}
+  \item How far can a benchmark-selected multimodal anomaly-detection model, combined with an
+MCP-enabled LLM agent, shorten fault-diagnosis time in a Kubernetes environment?.
+  \begin{enumerate}
+    \item Which state-of-the-art detector yields the best precision-recall-latency trade-off on a
+one-year Prometheus + Loki corpus while remaining deployable in near real time?
+    \item When triggered by that detector, how accurate and actionable are the LLM's root-
+cause explanations—measured by culprit-localisation precision and engineer
+resolution time?
+  \end{enumerate}
+\end{enumerate}
+
+\section{Structure of the Thesis}
+This master thesis is organized as follows:
+
+Chapter 2 reviews related work and theoretical foundations, providing an overview of existing approaches and their relevance to this research.
+
+Chapter 3 focuses on feature engineering and data characterization, describing the structure and properties of the time series data used in this study.
+
+Chapter 4 presents the practical implementation, including the evaluation of various methods and the selection of the most effective approach to achieve the research objectives. The performance of the developed models is also assessed in this chapter.
+
+Chapter 5 discusses the integration of the trained models into a production-ready system, detailing the deployment with an OpenWebUI frontend for engineers and multiple MCP servers accessing diverse data sources to enable robust root cause analysis.
+
+Chapter 6 evaluates the results and discusses the limitations of the work.
+
+Chapter 7 concludes the thesis and outlines potential directions for future research.
+
+\chapter{Related Work and Theorie}
+% Test cite \cite{EnhWebAnom2025} some times it works and some time not. like why.
+
+% \subsection{Erste Überschrift Tiefe 3 (subsection)}
+% \blindtext
+
+% \subsubsection{Erste Überschrift Tiefe 4 (subsubsection)}
+% \blindtext
+
+% \chapter{Zweite Überschrift der Tiefe 1 (chapter)}
+% \blindtext
+
+% \section{Zweite Überschrift Tiefe 2 (section)}
+% \blindtext
+
+% \section{Zweite Überschrift Tiefe 2 (section)}
+% \blindtext
+
+% \subsection{Zweite Überschrift Tiefe 3 (subsection)}
+% \blindtext
+
+% \subsection{Dritte Überschrift Tiefe 3 (subsection)}
+% \blindtext
+
+% \subsubsection{Zweite Überschrift Tiefe 4 (subsubsection)}
+% \blindtext
+
+% \noindent Querverweise werden in \LaTeX{} automatisch erzeugt und verwaltet, damit sie leicht aktualisiert werden können. Hier wird zum Beispiel auf Abbildung \ref{Abb1} verwiesen.
+
+% \begin{figure}[!htbp]
+% \centering
+% \includegraphics[width=0.5\linewidth]{images/buchruecken}
+% \caption{Beispiel für die Beschriftung eines Buchrückens.}\label{Abb1}
+% \end{figure}
+% \begin{figure}[!htbp]
+% \centering
+% \includegraphics[width=0.5\linewidth]{images/buchruecken}
+% \caption{2. Beispiel für die Beschriftung eines Buchrückens.}\label{Abb2}
+% \end{figure}
+
+% Und hier ist ein Verweis auf Tabelle \ref{tab1}. Das gezeigte Tabellenformat ist nur ein Beispiel. Tabellen können individuell gestaltet werden.
+
+% \begin{table}[!htbp]
+% \centering
+% \caption{Semesterplan der Lehrveranstaltung \glqq Angewandte Mathematik\grqq.}\label{tab1}
+% \begin{tabular}{| p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} |}\hline
+% Datum & Thema & Raum\\\hline
+% 20.08.2008 & Graphentheorie & HS 3.13\\
+% 01.10.2008 & Biomathematik & HS 1.05\\\hline
+% \end{tabular}
+% \end{table}
+% \begin{table}[!htbp]
+% \centering
+% \caption{2. Semesterplan der Lehrveranstaltung \glqq Angewandte Mathematik\grqq.}\label{tab2}
+% \begin{tabular}{| p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} |}\hline
+% Datum & Thema & Raum\\\hline
+% 20.08.2008 & Graphentheorie & HS 3.13\\
+% 01.10.2008 & Biomathematik & HS 1.05\\\hline
+% \end{tabular}
+% \end{table}
+
+% Hier wird auf die Formel \ref{Gl1} verwiesen.
+
+% \begin{align}
+% x = -\frac{p}{2}\pm\sqrt{\frac{p^2}{4}-q}\label{Gl1}
+% \end{align}
+% \begin{align}
+% x = -\frac{p}{2}\pm\sqrt{\frac{p^2}{4}-q}\label{Gl2}
+% \end{align}
+
+% Literaturverweise sollten automatisch verwaltet werden, vor allem, wenn es viele Quellenverweise gibt. Beispiele sind  \cite{Ko05a}, \cite{Ko05b}, \cite{MiGo05}, \cite{TeGo14}, \cite{HuHa07}, \cite{HuZi10}, \cite{ZiKu07}, \cite{He07}, \cite{SIE11}, \cite{SIE14}, \cite{ISO98}, \cite{ATM11}, \cite{Hu11}, \cite{Po10}. Das verwendete Zitierformat (bzw.~das Format des Literaturverzeichnisses) ist entspechend der Vorgaben der Studiengänge zu wählen.
+% Es wird dringend empfohlen, Biber oder BibTeX~zu verwenden (wie in diesen Beispielen).
+
+% \chapter{Dritte Überschrift der Tiefe 1 (chapter)}
+% \begin{figure}[!htbp]
+% \centering
+% \includegraphics[width=0.5\linewidth]{images/buchruecken}
+% \caption{3. Beispiel für die Beschriftung eines Buchrückens.}\label{Abb3}
+% \end{figure}
+% \begin{figure}[!htbp]
+% \centering
+% \includegraphics[width=0.5\linewidth]{images/buchruecken}
+% \caption{4. Beispiel für die Beschriftung eines Buchrückens.}\label{Abb4}
+% \end{figure}
+
+
+% \begin{table}[!htbp]
+% \centering
+% \caption{3. Semesterplan der Lehrveranstaltung \glqq Angewandte Mathematik\grqq.}\label{tab3}
+% \begin{tabular}{| p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} |}\hline
+% Datum & Thema & Raum\\\hline
+% 20.08.2008 & Graphentheorie & HS 3.13\\
+% 01.10.2008 & Biomathematik & HS 1.05\\\hline
+% \end{tabular}
+% \end{table}
+% \begin{table}[!htbp]
+% \centering
+% \caption{4. Semesterplan der Lehrveranstaltung \glqq Angewandte Mathematik\grqq.}\label{tab4}
+% \begin{tabular}{| p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} |}\hline
+% Datum & Thema & Raum\\\hline
+% 20.08.2008 & Graphentheorie & HS 3.13\\
+% 01.10.2008 & Biomathematik & HS 1.05\\\hline
+% \end{tabular}
+% \end{table}
+
+% \begin{align}
+% x = -\frac{p}{2}\pm\sqrt{\frac{p^2}{4}-q}\label{Gl3}
+% \end{align}
+% \begin{align}
+% x = -\frac{p}{2}\pm\sqrt{\frac{p^2}{4}-q}\label{Gl4}
+% \end{align}
+
+% % Hier können Sie Ihre KI-Tools dokumentieren. Diese werden automatisch in eine Tabelle integriert.
+% \aitoolentry{DeepL Translate}{Translation of an article in English}{Source (XXX), Chapter X on page X-X}
+% \aitoolentry{Chat GPT 4.0}{Grammar and Spelling}{"Please list issues with spelling and grammar in the following text: ..." Entire document}
+
+
+% Hier beginnen die Verzeichnisse.
+
+\clearpage
+\printbibliography
+\clearpage
+
+% Das Abbildungsverzeichnis
+\listoffigures
+\clearpage
+
+% Das Tabellenverzeichnis
+\listoftables
+\clearpage
+
+% Das Verzeichnis über die verwendeten KI-Tools
+\listaitools
+\clearpage
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\listacroname}
+\chapter*{\listacroname}
+\begin{acronym}[XXXXX]
+    % \acro{CI}[CI]{Continuous Integration}
+    % \acro{CD}[CD]{Continuous Delivery}
+    % \acro{DBaaS}[DBaaS]{Database-as-a-Service}
+    % \acro{IaC}[IaC]{Infrastructure as Code}
+    % \acro{LLMs}[LLMs]{Large Language Models}
+    % \acro{MTTR}[MTTR]{Mean Time to Resolution}
+    % \acro{MCP}[MCP]{Model Context Protocol}
+\end{acronym}
+
+
+Hier beginnt der Anhang.
+
+\clearpage
+\appendix
+\chapter{Anhang A}
+\clearpage
+\chapter{Anhang B}
+\end{document}
